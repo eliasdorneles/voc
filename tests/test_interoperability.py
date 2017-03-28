@@ -32,7 +32,8 @@ class InteroperabilityTest(TranspileTestCase):
         self.assertJavaExecution(
             """
             class MyPythonClass(extends=com.example.MyClass):
-                def __init__(self, x: java.lang.Integer) -> void:
+                @super((x, java.lang.Integer))
+                def __init__(self, x):
                     print('x', x)
 
             MyPythonClass()

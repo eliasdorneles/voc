@@ -3,6 +3,7 @@ import sys
 import traceback
 
 from ..java import opcodes as JavaOpcodes
+from .klass import Class
 from .modules import Module
 from .methods import MainFunction
 from .structures import (
@@ -215,7 +216,18 @@ class Visitor(ast.NodeVisitor):
     # Statements
     @node_visitor
     def visit_FunctionDef(self, node):
-        function = self._create_function(node, node.name, node.decorator_list)
+        class_init = node.name == '__init__' and isinstance(self.context, Class)
+        if class_init:
+            decorator_list = []
+            for d in node.decorator_list:
+                if is_call(d, 'super'):
+                    self.context.add_constructor_for_args(d.args)
+                else:
+                    decorator_list.append(d)
+        else:
+            decorator_list = node.decorator_list
+
+        function = self._create_function(node, node.name, decorator_list)
 
         self.push_context(function)
 

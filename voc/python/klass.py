@@ -37,6 +37,7 @@ class Class(Block):
         self.methods = methods if methods else []
         self.fields = fields if fields else {}
         self.init = init
+        self.constructors_to_generate = []
 
         self.include_default_constructor = include_default_constructor
 
@@ -59,6 +60,9 @@ class Class(Block):
     @property
     def module(self):
         return self._parent
+
+    def add_constructor_for_args(self, args):
+        self.constructors_to_generate.append(args)
 
     def visitor_setup(self):
         self.add_opcodes(
@@ -262,6 +266,9 @@ class Class(Block):
                     ]
                 )
             )
+
+        if self.constructors_to_generate:
+            print('Will generate bytecode for constructors:', self.constructors_to_generate)
 
         return self.namespace, self.name, classfile
 
