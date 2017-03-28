@@ -51,6 +51,7 @@ class InteroperabilityTest(TranspileTestCase):
             },
             out="""
             MyClass started with 1
+            x 1
             Done.
             """,
         )
