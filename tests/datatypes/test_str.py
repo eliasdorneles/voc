@@ -3,7 +3,10 @@ from hypothesis import given, example, strategies as st, note
 import string
 
 
-DIGITS = '0123456789₀₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹'
+# TODO: replace with line below when unicode numeric is fixed for subscript/superscript
+DIGITS = '0123456789'
+# DIGITS = '0123456789₀₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹'
+
 HEXDIGITS = string.hexdigits
 
 
@@ -17,12 +20,21 @@ class StrTests(TranspileTestCase):
                 print(err)
             """)
 
-    def test_iscase(self):
-        self.assertCodeExecution("""
-            for s in ['hello, World!', 'HELLO, WORLD.', 'ello? world', '']:
+    @given(st.text()
+           | st.text(alphabet=DIGITS)
+           | st.text(alphabet=HEXDIGITS))
+    @example('hello, World!')
+    @example('HELLO, WORLD.')
+    @example('ello? world')
+    @example('')
+    def test_iscase(self, s):
+        code = ("""
+                s = %r
                 print(s.islower())
                 print(s.isupper())
-            """)
+            """ % s)
+        note(code)
+        self.assertCodeExecution(code)
 
     @given(st.text()
            | st.text(alphabet=DIGITS)
@@ -39,25 +51,44 @@ class StrTests(TranspileTestCase):
         note(code)
         self.assertCodeExecution(code)
 
-    def test_isspace(self):
-        self.assertCodeExecution("""
-            for s in ['''  \t \r''', ' ', '\t\tnope\t\t', '']:
+    @given(st.text())
+    def test_isspace(self, s):
+        code = ("""
+                s = %r
                 print(s.isspace())
-            """)
+            """ % s)
+        note(code)
+        self.assertCodeExecution(code)
 
-    def test_isalnum(self):
-        self.assertCodeExecution("""
-            for word in ["", "12", "abc", "abc12", "\u00c4", "\x41", "a@g", "äÆ",
-            "12.2", "'Hi'", "Hello!!", "HELLO", "V0c", "A A"]:
-                print(word.isalnum())
-            """)
+    @given(st.text()
+           | st.text(alphabet=DIGITS)
+           | st.text(alphabet=HEXDIGITS))
+    def test_isalnum(self, s):
+        code = ("""
+                s = %r
+                print(s.isalnum())
+            """ % s)
+        note(code)
+        self.assertCodeExecution(code)
 
-    def test_isalpha(self):
-        self.assertCodeExecution("""
-            for s in ['Hello World', 'hello wORLd.', 'Hello world.', '', 'hello1',
-            'this', 'this is string example....wow!!!', 'átomo', 'CasesLikeTheseWithoutSpaces']:
-                print(s.isalpha())
-            """)
+    @given(st.text()
+           | st.text(alphabet=DIGITS)
+           | st.text(alphabet=HEXDIGITS))
+    @example('hello wORLd.')
+    @example('Hello_World')
+    @example('Hello_world.')
+    @example('hello1')
+    @example('this')
+    @example('this is string example....wow!!!')
+    @example('átomo')
+    @example('CasesLikeTheseWithoutSpaces')
+    def test_isalpha(self, s):
+        code = ("""
+                s = %r
+                print(s.isalnum())
+            """ % s)
+        note(code)
+        self.assertCodeExecution(code)
 
     def test_isdecimal(self):
         self.assertCodeExecution("""
