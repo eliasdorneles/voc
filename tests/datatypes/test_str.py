@@ -1,4 +1,10 @@
 from .. utils import TranspileTestCase, UnaryOperationTestCase, BinaryOperationTestCase, InplaceOperationTestCase
+from hypothesis import given, example, strategies as st, note
+import string
+
+
+DIGITS = '0123456789₀₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹'
+HEXDIGITS = string.hexdigits
 
 
 class StrTests(TranspileTestCase):
@@ -18,11 +24,20 @@ class StrTests(TranspileTestCase):
                 print(s.isupper())
             """)
 
-    def test_isdigit(self):
-        self.assertCodeExecution("""
-            for s in ['112358132134', '3.14159', '12312344df', '']:
+    @given(st.text()
+           | st.text(alphabet=DIGITS)
+           | st.text(alphabet=HEXDIGITS))
+    @example('01234')
+    @example('3.14159')
+    @example('12312344df')
+    @example(' ')
+    def test_isdigit(self, s):
+        code = ("""
+                s = %r
                 print(s.isdigit())
-            """)
+            """ % s)
+        note(code)
+        self.assertCodeExecution(code)
 
     def test_isspace(self):
         self.assertCodeExecution("""
