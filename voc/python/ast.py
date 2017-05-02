@@ -613,11 +613,12 @@ class Visitor(ast.NodeVisitor):
                 java.New(exception),
             )
 
-            for arg in args:
+            for arg in reversed(args):
                 self.visit(arg)
 
             self.context.add_opcodes(
-                java.Init(exception, *(['Lorg/python/Object;'] * len(args)))
+                java.Array(len(args), fill='STACK'),
+                java.Init(exception, '[Lorg/python/Object;')
             )
 
         self.context.add_opcodes(

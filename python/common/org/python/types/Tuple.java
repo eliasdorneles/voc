@@ -1,4 +1,5 @@
 package org.python.types;
+import java.util.Arrays;
 
 public class Tuple extends org.python.types.Object {
     public java.util.List<org.python.Object> value;
@@ -24,6 +25,11 @@ public class Tuple extends org.python.types.Object {
     public Tuple() {
         super();
         this.value = new java.util.ArrayList<org.python.Object>();
+    }
+
+    public Tuple(org.python.Object[] tupleArray) {
+        super();
+        this.value = Arrays.asList(tupleArray);
     }
 
     public Tuple(java.util.List<org.python.Object> tuple) {

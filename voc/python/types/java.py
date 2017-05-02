@@ -68,13 +68,23 @@ class Array:
             JavaOpcodes.ANEWARRAY(self.classname),
         )
         if self.fill:
-            for i in range(self.size):
-                context.add_opcodes(
-                    JavaOpcodes.DUP(),
-                    ICONST_val(i),
-                    self.fill,
-                    JavaOpcodes.AASTORE(),
-                )
+            if self.fill == 'STACK':
+                for i in range(self.size):
+                    context.add_opcodes(
+                        JavaOpcodes.DUP_X1(),
+                        JavaOpcodes.SWAP(),
+                        ICONST_val(i),
+                        JavaOpcodes.SWAP(),
+                        JavaOpcodes.AASTORE(),
+                    )
+            else:
+                for i in range(self.size):
+                    context.add_opcodes(
+                        JavaOpcodes.DUP(),
+                        ICONST_val(i),
+                        self.fill,
+                        JavaOpcodes.AASTORE(),
+                    )
 
     class get:
         def __init__(self, index):

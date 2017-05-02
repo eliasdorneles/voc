@@ -4,6 +4,8 @@ package org.python.exceptions;
         __doc__ = "Common base class for all exceptions"
 )
 public class BaseException extends org.python.types.Object {
+    org.python.types.Tuple args = new org.python.types.Tuple();
+
     public BaseException() {
         super();
         // System.out.println("EX: " + this);
@@ -35,4 +37,6 @@ public class BaseException extends org.python.types.Object {
     public java.lang.String toString() {
         return this.getClass().getSimpleName() + ": " + this.getMessage();
     }
+
+    @Override
 }
